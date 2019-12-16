@@ -1,0 +1,111 @@
+#include "path/to/include/file.apexinc"
+
+options
+{
+	sort = backtofront; (none / backtofront / fronttoback)
+	transparent = true;
+	priority = 100; (integer)
+};
+
+shader ShaderName
+{
+	pass {
+	depth
+	{
+		read = false;
+		write = false;
+		compare = lequal; (never / always / lessthan / lessthanequal / equal / notequal / greaterthanequal / greaterthan)
+		clip = true;
+	};
+
+	raster
+	{
+		fill = wire; (wire / solid)
+		cull = cw; (cw / ccw / none)
+		scissor = false;
+		multisample = false;
+	};
+
+	stencil
+	{
+		reference = 0; (integer)
+		enabled = true;
+		readmask = 20; (integer 0-255)
+		writemask = 30; (iteger 0-255)
+		front
+		{
+			fail = keep; (keep / zero / replace / increment / decrement / incrementwrap / decrementwrap / invert)
+			zfail = keep; (keep / zero / replace / increment / decrement / incrementwrap / decrementwrap / invert)
+			pass = keep; (keep / zero / replace / increment / decrement / incrementwrap / decrementwrap / invert)
+			compare = lequal; (never / always / lessthan / lessthanequal / equal / notequal / greaterthanequal / greaterthan)
+		};
+		back
+		{
+			fail = keep; (keep / zero / replace / increment / decrement / incrementwrap / decrementwrap / invert)
+			zfail = keep; (keep / zero / replace / increment / decrement / incrementwrap / decrementwrap / invert)
+			pass = keep; (keep / zero / replace / increment / decrement / incrementwrap / decrementwrap / invert)
+			compare = lequal; (never / always / lessthan / lessthanequal / equal / notequal / greaterthanequal / greaterthan)
+		};
+	};
+
+	code
+	{
+		interface VertexInput
+		{
+			vec3 position : POSITION; (semantics based on DX)
+		};
+
+		interface VStoFS
+		{
+			vec4 position;
+		};
+
+		constantbuffer PerObject
+		{
+			mat4 mvp;
+			vec3 value = {0.0f, 20.0f, 5.4f};
+		};
+
+		Texture2D albedoMap = black; (white / black / normal)
+		Texture2D normalMap = normal;
+
+		samplerstate albedoMap
+		{
+			minfilter = linear; (see list below for possible values)
+			magfilter = linear; (see list below for possible values)
+			addressu = wrap; (wrap / mirror / clamp / border / mirroronce)
+			addressv = wrap; (wrap / mirror / clamp / border / mirroronce)
+			addressw = wrap; (wrap / mirror / clamp / border / mirroronce)
+			bordercolor = {0, 230, 22, 255}; (vec4i 0-255)
+			maxanisotropy = 16; (integer 0-16)
+			maxlod = 14.0f; {float 0-FLT_MAX)
+			minlod = 0.0f; (float 0-FLT_MAX)
+			lodbias = 1.0f; (float 0-FLT_MAX)
+			comparisonfunc = never; (never / less / equal / lessequal / greater / notequal / greaterequal / always)
+		};
+
+		VStoFS vsmain(VertexInput input) // shader types (vsmain / gsmain / hsmain / dsmain / fsmain / csmain)
+		{
+			VStoFS output;
+			output.position = mvp * input.position;
+
+			return output;
+		}
+
+		vec4 fsmain(in VStoFS input) : TARGET0 (semantics)
+		{
+			return vec4(1.0f, 0.0f, 1.0f, 1.0f);
+		}
+
+	};
+	}; (pass)
+};
+
+
+// Filter values
+nearest
+linear
+nearestmipmapnearest
+linearmipmapnearest
+nearestmipmaplinear
+linearmipmaplinear
