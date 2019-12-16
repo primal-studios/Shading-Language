@@ -143,8 +143,7 @@ public:
   public:
     PassBlockContentsContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
-    std::vector<CodeBlockContext *> codeBlock();
-    CodeBlockContext* codeBlock(size_t i);
+    CodeBlockContext *codeBlock();
 
 
     virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;

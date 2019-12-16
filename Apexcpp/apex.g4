@@ -21,7 +21,7 @@ pass
    ;
 
 passBlockContents
-   : codeBlock+
+   : codeBlock
    ;
 
 codeBlock
